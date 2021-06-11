@@ -7,8 +7,8 @@ app.use(Express.json());
 
 const controllers = require("./controllers");
 
-app.use('/journal', controllers.logController);
-
+app.use('/log', controllers.logController);
+app.use(require('./middleware/headers'));
 app.use(require("./middleware/validate-jwt"));
 app.use('/user', controllers.userController);
 
@@ -20,6 +20,6 @@ dbConnection.authenticate()
     });  
     })
     .catch((err) => {
-        console.log('[Server]: Server crashed. Error= ${err}');
+        console.log(`[Server]: Server crashed. Error= ${err}`);
 
     });

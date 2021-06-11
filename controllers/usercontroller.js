@@ -4,12 +4,21 @@ const {UserModel} = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+/*
+===============
+REGISTER USER
+===============
+*/
 router.post('/register', async (req, res) => {
-    let { email, password} = req.body.user;     
+    let { email, password, firstName, lastName, street} = req.body.user;     
     try{
         const User = await UserModel.create({
         email,
         password: bcrypt.hashSync(password, 13),
+        firstName,
+        lastName,
+        street,
+        admin: false
     });
 
     let token = jwt.sign({id: User.id}, process.env.JWT_SECRET, {expiresIn: 60 * 60* 24});
@@ -31,6 +40,14 @@ router.post('/register', async (req, res) => {
 }
 }
 });
+
+
+/*
+===========
+LOGIN USER
+===========
+*/
+
 router.post("/login", async (req, res) => {
     let { email, password} = req.body.user;
 
@@ -68,5 +85,20 @@ router.post("/login", async (req, res) => {
     })
 }
 });
+
+/**
+==============
+GET ALL USERS
+==============
+ */
+
+
+
+
+/**
+==============
+DELETE A USER
+==============
+ */
 
 module.exports = router;
