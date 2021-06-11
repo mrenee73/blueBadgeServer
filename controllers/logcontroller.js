@@ -68,12 +68,12 @@ router.get("/mine/", middleware.validateSession, async(req, res) => {
 });
 
 /*
-=======================
-* GET LOGS BY LOG ID
-=======================
+============================
+* GET LOGS BY LOG ID BY USER
+============================
 */
 
-router.get("/:id", middleware.validateSession, async(req, res) => {
+router.get("/mine/:id", middleware.validateSession, async(req, res) => {
     const logId = req.params.id;
     const userId = req.user.id;
     try {
@@ -93,9 +93,37 @@ router.get("/:id", middleware.validateSession, async(req, res) => {
     
 });
 
+
+/*
+============================
+* GET ANY LOG BY LOG ID 
+============================
+*/
+
+router.get("/adminGet/:id",  async(req, res) => {
+    const logId = req.params.id;
+try {
+    const results = await LogModel.findAll({
+        where: {
+            id: logId,
+            
+        }
+    });
+        res.status(200).json(results);
+} catch (err) {
+    res.status(500).json({
+        message:'Unable to retrieve log',
+        error: err
+    })
+}    
+    
+});
+
+
+
 /*
 =======================
-! UPDATE LOGS By User
+* UPDATE LOGS By User
 =======================
 */
 router.put("/update/:entryId", middleware.validateSession , async (req, res) => {
@@ -117,6 +145,35 @@ router.put("/update/:entryId", middleware.validateSession , async (req, res) => 
     try {
         const update = await LogModel.update(updatedLog, query);
         res.status(200).json(update);
+        console.log(updatedLog);
+    } catch (err) {
+        res.status(500).json({ error: err});
+    }
+});
+
+/*
+=======================
+*ADMIN UPDATE ANY LOG
+=======================
+*/
+
+router.put("/adminUpdate/:entryId",  async (req, res) => {
+    const { description, title, category, date, status } = req.body.log;
+    const logId = req.params.entryId;
+    
+    const query = {
+        where: {
+            id: logId
+        }
+    };
+
+    const updatedLog = {
+        description, title, category, date, status
+    };
+
+    try {
+        const updateByAdmin = await LogModel.update(updatedLog, query);
+        res.status(200).json(updateByAdmin);
         console.log(updatedLog, "Log Updated.");
     } catch (err) {
         res.status(500).json({ error: err});
@@ -125,31 +182,7 @@ router.put("/update/:entryId", middleware.validateSession , async (req, res) => 
 
 /*
 =======================
-! ADMIN UPDATE ANY LOG
-=======================
-*/
-
-router.put("admin/:id", async (req, res) => {
-    const {description, title, category, date, status} = req.body;
-    const logId = req.params.id;
-    const userId = req.user.id;
-
-    try {
-        const update = await LogModel.update({description, title, category, date, status},
-            {where: {id: logId, owner_id:userId }});
-        res.status(200).json({
-            update,
-            message: "Log has been updated."});
-    } catch (err) {
-        res.status(500).json({ 
-            message: "Unable to update log",
-            error: err});
-    }
-});
-
-/*
-=======================
-! DELETE LOGS 
+* DELETE LOGS 
 =======================
 */
 router.delete("/:id", middleware.validateSession, async(req, res) =>{
@@ -174,16 +207,15 @@ router.delete("/:id", middleware.validateSession, async(req, res) =>{
 
 /*
 =======================
-! ADMIN DELETE ANY LOGS 
+* DELETE ANY LOGS 
 =======================
 */
-router.delete("/:id", middleware.validateSession, async(req, res) =>{
+router.delete("/adminDelete/:id",  async(req, res) =>{
     const logId = req.params.id;
-    const userId = req.user.id;
-
+    
     try {
         const logDeleted = await LogModel.destroy({
-            where: {id: logId, owner_id:userId }
+            where: {id: logId }
         })
         res.status(200).json({
             message: "Log deleted",
