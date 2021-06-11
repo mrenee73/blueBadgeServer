@@ -51,7 +51,7 @@ router.get('/', async (req, res) =>{
 ====================
  */
 
-router.get("/", middleware.validateSession, async(req, res) => {
+router.get("/mine/", middleware.validateSession, async(req, res) => {
     let {id} = req.user;
     try{
         const userLogs = await LogModel.findAll({
@@ -95,10 +95,41 @@ router.get("/:id", middleware.validateSession, async(req, res) => {
 
 /*
 =======================
-* UPDATE LOGS 
+! UPDATE LOGS By User
 =======================
 */
-router.put("/:id", middleware.validateSession, async (req, res) => {
+router.put("/update/:entryId", middleware.validateSession , async (req, res) => {
+    const { description, title, category, date, status } = req.body.log;
+    const logId = req.params.entryId;
+    const userId = req.user.id;
+
+    const query = {
+        where: {
+            id: logId,
+            owner_id: userId
+        }
+    };
+
+    const updatedLog = {
+        description, title, category, date, status
+    };
+
+    try {
+        const update = await LogModel.update(updatedLog, query);
+        res.status(200).json(update);
+        console.log(updatedLog, "Log Updated.");
+    } catch (err) {
+        res.status(500).json({ error: err});
+    }
+});
+
+/*
+=======================
+! ADMIN UPDATE ANY LOG
+=======================
+*/
+
+router.put("admin/:id", async (req, res) => {
     const {description, title, category, date, status} = req.body;
     const logId = req.params.id;
     const userId = req.user.id;
@@ -118,7 +149,32 @@ router.put("/:id", middleware.validateSession, async (req, res) => {
 
 /*
 =======================
-* DELETE LOGS 
+! DELETE LOGS 
+=======================
+*/
+router.delete("/:id", middleware.validateSession, async(req, res) =>{
+    const logId = req.params.id;
+    const userId = req.user.id;
+
+    try {
+        const logDeleted = await LogModel.destroy({
+            where: {id: logId, owner_id:userId }
+        })
+        res.status(200).json({
+            message: "Log deleted",
+            logDeleted
+        })
+
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to delete log: ${err}`
+        })
+    }
+})
+
+/*
+=======================
+! ADMIN DELETE ANY LOGS 
 =======================
 */
 router.delete("/:id", middleware.validateSession, async(req, res) =>{
