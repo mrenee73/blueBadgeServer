@@ -3,14 +3,11 @@ const Express = require('express');
 const app = Express();
 const dbConnection = require('./db');
 
+const controllers = require('./controllers');
 app.use(Express.json());
-
-const controllers = require("./controllers");
-
-app.use('/log', controllers.logController);
 app.use(require('./middleware/headers'));
-app.use(require("./middleware/validate-jwt"));
 app.use('/user', controllers.userController);
+app.use('/log', controllers.logController);
 
 dbConnection.authenticate()
     .then(() => dbConnection.sync())
