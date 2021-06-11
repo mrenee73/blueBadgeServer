@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('postgres://postgres:YOURPASSWORDHERE@localhost:5432/hoa-log')
+const sequelize = new Sequelize(process.env.DB_CONNECTION_STRING)
 
 module.exports = sequelize; 
