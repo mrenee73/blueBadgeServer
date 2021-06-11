@@ -92,6 +92,14 @@ GET ALL USERS
 ==============
  */
 
+router.get('/', async (req, res) =>{
+    try{
+        const entries = await UserModel.findAll();
+        res.status(200).json(entries);
+    } catch (err) {
+        res.status(500).json({error: err});
+    }
+});
 
 
 
@@ -100,5 +108,24 @@ GET ALL USERS
 DELETE A USER
 ==============
  */
+
+router.delete("/delete/:id",  async(req, res) =>{
+    
+    try {
+        const userDeleted = await UserModel.destroy({
+            where: {id: req.params.id}
+        })
+        res.status(200).json({
+            message: "User deleted",
+            userDeleted
+        })
+
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to delete user: ${err}`
+        })
+    }
+})
+
 
 module.exports = router;

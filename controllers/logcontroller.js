@@ -30,6 +30,21 @@ router.post('/', middleware.validateSession, async (req, res) =>{
     }
 });
 
+/**
+===============
+* GET ALL LOGS
+===============
+ */
+
+router.get('/', async (req, res) =>{
+    try{
+        const entries = await LogModel.findAll();
+        res.status(200).json(entries);
+    } catch (err) {
+        res.status(500).json({error: err});
+    }
+});
+
 /*
 ====================
 * GET LOGS BY USER
