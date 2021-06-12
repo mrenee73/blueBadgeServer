@@ -51,7 +51,7 @@ router.get('/', async (req, res) =>{
 ====================
  */
 
-router.get("/", middleware.validateSession, async(req, res) => {
+router.get("/mine/", middleware.validateSession, async(req, res) => {
     let {id} = req.user;
     try{
         const userLogs = await LogModel.findAll({
@@ -68,12 +68,12 @@ router.get("/", middleware.validateSession, async(req, res) => {
 });
 
 /*
-=======================
-* GET LOGS BY LOG ID
-=======================
+============================
+* GET LOGS BY LOG ID BY USER
+============================
 */
 
-router.get("/:id", middleware.validateSession, async(req, res) => {
+router.get("/mine/:id", middleware.validateSession, async(req, res) => {
     const logId = req.params.id;
     const userId = req.user.id;
     try {
@@ -93,26 +93,90 @@ router.get("/:id", middleware.validateSession, async(req, res) => {
     
 });
 
+
+/*
+============================
+* GET ANY LOG BY LOG ID 
+============================
+*/
+
+router.get("/adminGet/:id",  async(req, res) => {
+    const logId = req.params.id;
+try {
+    const results = await LogModel.findAll({
+        where: {
+            id: logId,
+            
+        }
+    });
+        res.status(200).json(results);
+} catch (err) {
+    res.status(500).json({
+        message:'Unable to retrieve log',
+        error: err
+    })
+}    
+    
+});
+
+
+
 /*
 =======================
-* UPDATE LOGS 
+* UPDATE LOGS By User
 =======================
 */
-router.put("/:id", middleware.validateSession, async (req, res) => {
-    const {description, title, category, date, status} = req.body;
-    const logId = req.params.id;
+router.put("/update/:entryId", middleware.validateSession , async (req, res) => {
+    const { description, title, category, date, status } = req.body.log;
+    const logId = req.params.entryId;
     const userId = req.user.id;
 
+    const query = {
+        where: {
+            id: logId,
+            owner_id: userId
+        }
+    };
+
+    const updatedLog = {
+        description, title, category, date, status
+    };
+
     try {
-        const update = await LogModel.update({description, title, category, date, status},
-            {where: {id: logId, owner_id:userId }});
-        res.status(200).json({
-            update,
-            message: "Log has been updated."});
+        const update = await LogModel.update(updatedLog, query);
+        res.status(200).json(update);
+        console.log(updatedLog);
     } catch (err) {
-        res.status(500).json({ 
-            message: "Unable to update log",
-            error: err});
+        res.status(500).json({ error: err});
+    }
+});
+
+/*
+=======================
+*ADMIN UPDATE ANY LOG
+=======================
+*/
+
+router.put("/adminUpdate/:entryId",  async (req, res) => {
+    const { description, title, category, date, status } = req.body.log;
+    const logId = req.params.entryId;
+    
+    const query = {
+        where: {
+            id: logId
+        }
+    };
+
+    const updatedLog = {
+        description, title, category, date, status
+    };
+
+    try {
+        const updateByAdmin = await LogModel.update(updatedLog, query);
+        res.status(200).json(updateByAdmin);
+        console.log(updatedLog, "Log Updated.");
+    } catch (err) {
+        res.status(500).json({ error: err});
     }
 });
 
@@ -128,6 +192,30 @@ router.delete("/:id", middleware.validateSession, async(req, res) =>{
     try {
         const logDeleted = await LogModel.destroy({
             where: {id: logId, owner_id:userId }
+        })
+        res.status(200).json({
+            message: "Log deleted",
+            logDeleted
+        })
+
+    }catch (err) {
+        res.status(500).json({
+            message: `Failed to delete log: ${err}`
+        })
+    }
+})
+
+/*
+=======================
+* DELETE ANY LOGS 
+=======================
+*/
+router.delete("/adminDelete/:id",  async(req, res) =>{
+    const logId = req.params.id;
+    
+    try {
+        const logDeleted = await LogModel.destroy({
+            where: {id: logId }
         })
         res.status(200).json({
             message: "Log deleted",
