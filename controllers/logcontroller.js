@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {LogModel} = require('../models');
+const {LogModel, UserModel} = require('../models');
 const middleware = require("../middleware");
 const Log = require('../models/log');
 const User = require('../models/user');
@@ -52,15 +52,17 @@ router.get('/', async (req, res) =>{
 ============================
  */
 
-router.get('/allInfo/', async (req, res) =>{
+router.get('/userInfo', async (req, res) =>{
+    console.log('Testpoint');
     try{
-        LogModel.findAll({
-            where:{},
-            include: [{
-                 UserModel,
+        await LogModel.findAll({
+            include: [
+                {
+                model: UserModel,
                 }]
-        }).then ((data) => {
-            console.log("*********************\n\n\n\n\n",data);
+        }).then (posts => {
+            console.log(posts);
+            res.status(200).json({posts:posts})
         })
         
     } catch (err) {
