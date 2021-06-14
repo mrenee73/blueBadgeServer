@@ -2,6 +2,7 @@ const router = require('express').Router();
 const {LogModel} = require('../models');
 const middleware = require("../middleware");
 const Log = require('../models/log');
+const User = require('../models/user');
 
 /*
 ===============
@@ -18,7 +19,7 @@ router.post('/', middleware.validateSession, async (req, res) =>{
         category,
         date, 
         status,
-        owner_id: id
+        userId: id
     }
     try{
         const newLog = await LogModel.create(logEntry);
@@ -45,6 +46,28 @@ router.get('/', async (req, res) =>{
     }
 });
 
+/**
+============================
+* GET ALL LOGS With UserInfo
+============================
+ */
+
+router.get('/allInfo/', async (req, res) =>{
+    try{
+        LogModel.findAll({
+            where:{},
+            include: [{
+                 UserModel,
+                }]
+        }).then ((data) => {
+            console.log("*********************\n\n\n\n\n",data);
+        })
+        
+    } catch (err) {
+        res.status(500).json({error: err});
+    }
+});
+
 /*
 ====================
 * GET LOGS BY USER
@@ -56,7 +79,7 @@ router.get("/mine/", middleware.validateSession, async(req, res) => {
     try{
         const userLogs = await LogModel.findAll({
             where:{
-                owner_id: id
+                userId: id
             }
         });
         res.status(200).json(userLogs);
@@ -80,7 +103,7 @@ router.get("/mine/:id", middleware.validateSession, async(req, res) => {
     const results = await LogModel.findAll({
         where: {
             id: logId,
-            owner_id: userId
+            userId: userId
         }
     });
         res.status(200).json(results);
@@ -134,7 +157,7 @@ router.put("/update/:entryId", middleware.validateSession , async (req, res) => 
     const query = {
         where: {
             id: logId,
-            owner_id: userId
+            userId: userId
         }
     };
 
@@ -191,7 +214,7 @@ router.delete("/:id", middleware.validateSession, async(req, res) =>{
 
     try {
         const logDeleted = await LogModel.destroy({
-            where: {id: logId, owner_id:userId }
+            where: {id: logId, userId:userId }
         })
         res.status(200).json({
             message: "Log deleted",

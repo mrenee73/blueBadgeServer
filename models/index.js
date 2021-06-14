@@ -5,3 +5,5 @@ module.exports = {
     UserModel,
     LogModel
 };
+
+UserModel.hasMany(LogModel);
