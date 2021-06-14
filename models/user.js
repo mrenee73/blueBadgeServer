@@ -11,6 +11,22 @@ const User= db.define('user',{
         type: DataTypes.STRING,
         allowNull: false,
     },
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    street: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    admin:{
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    }
 });
 
 module.exports =User;
