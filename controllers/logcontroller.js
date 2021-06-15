@@ -35,16 +35,17 @@ router.post('/', middleware.validateSession, async (req, res) =>{
 ===============
 * GET ALL LOGS
 ===============
+Not needed.  Used the endpoint with database association instead.
  */
 
-router.get('/', async (req, res) =>{
-    try{
-        const entries = await LogModel.findAll();
-        res.status(200).json(entries);
-    } catch (err) {
-        res.status(500).json({error: err});
-    }
-});
+// router.get('/', async (req, res) =>{
+//     try{
+//         const entries = await LogModel.findAll();
+//         res.status(200).json(entries);
+//     } catch (err) {
+//         res.status(500).json({error: err});
+//     }
+// });
 
 /**
 ============================
@@ -96,53 +97,55 @@ router.get("/mine/", middleware.validateSession, async(req, res) => {
 ============================
 * GET LOGS BY LOG ID BY USER
 ============================
+Functional but not used.
 */
 
-router.get("/mine/:id", middleware.validateSession, async(req, res) => {
-    const logId = req.params.id;
-    const userId = req.user.id;
-    try {
-    const results = await LogModel.findAll({
-        where: {
-            id: logId,
-            userId: userId
-        }
-    });
-        res.status(200).json(results);
-} catch (err) {
-    res.status(500).json({
-        message:'Unable to retrieve log',
-        error: err
-    })
-}    
+// router.get("/mine/:id", middleware.validateSession, async(req, res) => {
+//     const logId = req.params.id;
+//     const userId = req.user.id;
+//     try {
+//     const results = await LogModel.findAll({
+//         where: {
+//             id: logId,
+//             userId: userId
+//         }
+//     });
+//         res.status(200).json(results);
+// } catch (err) {
+//     res.status(500).json({
+//         message:'Unable to retrieve log',
+//         error: err
+//     })
+// }    
     
-});
+// });
 
 
 /*
 ============================
 * GET ANY LOG BY LOG ID 
 ============================
+Functional but not used.
 */
 
-router.get("/adminGet/:id",  async(req, res) => {
-    const logId = req.params.id;
-try {
-    const results = await LogModel.findAll({
-        where: {
-            id: logId,
+// router.get("/adminGet/:id",  async(req, res) => {
+//     const logId = req.params.id;
+// try {
+//     const results = await LogModel.findAll({
+//         where: {
+//             id: logId,
             
-        }
-    });
-        res.status(200).json(results);
-} catch (err) {
-    res.status(500).json({
-        message:'Unable to retrieve log',
-        error: err
-    })
-}    
+//         }
+//     });
+//         res.status(200).json(results);
+// } catch (err) {
+//     res.status(500).json({
+//         message:'Unable to retrieve log',
+//         error: err
+//     })
+// }    
     
-});
+// });
 
 
 
@@ -180,30 +183,31 @@ router.put("/update/:entryId", middleware.validateSession , async (req, res) => 
 =======================
 *ADMIN UPDATE ANY LOG
 =======================
+Functional but not used.
 */
 
-router.put("/adminUpdate/:entryId",  async (req, res) => {
-    const { description, title, category, date, status } = req.body.log;
-    const logId = req.params.entryId;
+// router.put("/adminUpdate/:entryId",  async (req, res) => {
+//     const { description, title, category, date, status } = req.body.log;
+//     const logId = req.params.entryId;
     
-    const query = {
-        where: {
-            id: logId
-        }
-    };
+//     const query = {
+//         where: {
+//             id: logId
+//         }
+//     };
 
-    const updatedLog = {
-        description, title, category, date, status
-    };
+//     const updatedLog = {
+//         description, title, category, date, status
+//     };
 
-    try {
-        const updateByAdmin = await LogModel.update(updatedLog, query);
-        res.status(200).json(updateByAdmin);
-        console.log(updatedLog, "Log Updated.");
-    } catch (err) {
-        res.status(500).json({ error: err});
-    }
-});
+//     try {
+//         const updateByAdmin = await LogModel.update(updatedLog, query);
+//         res.status(200).json(updateByAdmin);
+//         console.log(updatedLog, "Log Updated.");
+//     } catch (err) {
+//         res.status(500).json({ error: err});
+//     }
+// });
 
 /*
 =======================
@@ -234,24 +238,25 @@ router.delete("/:id", middleware.validateSession, async(req, res) =>{
 =======================
 * DELETE ANY LOGS 
 =======================
+Functional but not used.
 */
-router.delete("/adminDelete/:id",  async(req, res) =>{
-    const logId = req.params.id;
+// router.delete("/adminDelete/:id",  async(req, res) =>{
+//     const logId = req.params.id;
     
-    try {
-        const logDeleted = await LogModel.destroy({
-            where: {id: logId }
-        })
-        res.status(200).json({
-            message: "Log deleted",
-            logDeleted
-        })
+//     try {
+//         const logDeleted = await LogModel.destroy({
+//             where: {id: logId }
+//         })
+//         res.status(200).json({
+//             message: "Log deleted",
+//             logDeleted
+//         })
 
-    }catch (err) {
-        res.status(500).json({
-            message: `Failed to delete log: ${err}`
-        })
-    }
-})
+//     }catch (err) {
+//         res.status(500).json({
+//             message: `Failed to delete log: ${err}`
+//         })
+//     }
+// })
 
 module.exports = router;

@@ -18,9 +18,6 @@ const Log = db.define("log", {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    // owner_id: {
-    //     type: DataTypes.INTEGER
-    // },
     status: {
         type: DataTypes.STRING,
         allowNull: false,
