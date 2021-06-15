@@ -1,3 +1,14 @@
-const UserModel = require('./user');
+const db = require('../db');
 
-module.exports = {UserModel};
+const UserModel = require('./user');
+const LogModel = require('./log');
+
+module.exports = {
+    dbConnection: db,
+
+    UserModel,
+    LogModel
+};
+
+UserModel.hasMany(LogModel);
+LogModel.belongsTo(UserModel);
