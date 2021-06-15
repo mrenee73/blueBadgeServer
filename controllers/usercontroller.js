@@ -87,19 +87,20 @@ router.post("/login", async (req, res) => {
 });
 
 /**
-==============
-GET ALL USERS
-==============
+======================================
+GET ALL USERS FOR COMMUNITY DIRECTORY
+======================================
+Functional but not used.
  */
 
-router.get('/', async (req, res) =>{
-    try{
-        const entries = await UserModel.findAll();
-        res.status(200).json(entries);
-    } catch (err) {
-        res.status(500).json({error: err});
-    }
-});
+// router.get('/', async (req, res) =>{
+//     try{
+//         const entries = await UserModel.findAll();
+//         res.status(200).json(entries);
+//     } catch (err) {
+//         res.status(500).json({error: err});
+//     }
+// });
 
 
 
@@ -107,25 +108,26 @@ router.get('/', async (req, res) =>{
 ==============
 DELETE A USER
 ==============
+Functional but not used.
  */
 
-router.delete("/delete/:id",  async(req, res) =>{
+// router.delete("/delete/:id",  async(req, res) =>{
     
-    try {
-        const userDeleted = await UserModel.destroy({
-            where: {id: req.params.id}
-        })
-        res.status(200).json({
-            message: "User deleted",
-            userDeleted
-        })
+//     try {
+//         const userDeleted = await UserModel.destroy({
+//             where: {id: req.params.id}
+//         })
+//         res.status(200).json({
+//             message: "User deleted",
+//             userDeleted
+//         })
 
-    }catch (err) {
-        res.status(500).json({
-            message: `Failed to delete user: ${err}`
-        })
-    }
-})
+//     }catch (err) {
+//         res.status(500).json({
+//             message: `Failed to delete user: ${err}`
+//         })
+//     }
+// })
 
 
 
